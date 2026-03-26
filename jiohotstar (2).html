@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>JioHotstar Live Cricket — Watch Free | icn.rishi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
+<style>
+:root{
+  --bg:#0a0a0f;--bg2:#111118;--bg3:#16161f;--bg4:#1c1c28;
+  --accent:#e63946;--accent2:#ff6b6b;
+  --blue:#4cc9f0;--green:#06d6a0;
+  --hotstar:#1f80e0;--hotstar2:#00c8e0;
+  --text:#f0f0f5;--muted:#6b6b8a;--muted2:#9090aa;
+  --border:rgba(255,255,255,0.06);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 10% 30%,rgba(31,128,224,0.07) 0%,transparent 50%),radial-gradient(ellipse at 90% 70%,rgba(0,200,224,0.04) 0%,transparent 50%);pointer-events:none;z-index:0;}
+
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOP BAR */
+.top-bar{position:relative;z-index:200;background:linear-gradient(90deg,#1f80e0,#00c8e0);padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.5px;}
+.top-bar a{color:#fff;text-decoration:none;display:flex;align-items:center;gap:6px;}
+.live-pulse{width:7px;height:7px;background:#fff;border-radius:50%;animation:pulse 1.5s ease-in-out infinite;flex-shrink:0;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:60px;background:rgba(10,10,15,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;display:flex;align-items:baseline;gap:6px;}
+.nav-title .grad{background:linear-gradient(135deg,#e63946,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-title .white{color:#fff;}
+.nav-formerly{font-size:9px;color:var(--muted);letter-spacing:1px;font-family:'DM Sans',sans-serif;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-btn{display:flex;align-items:center;gap:6px;color:var(--muted2);font-size:12px;font-weight:600;text-decoration:none;border:1px solid var(--border);padding:7px 14px;border-radius:20px;transition:all .2s;}
+.nav-btn:hover{color:var(--text);border-color:rgba(255,255,255,.15);}
+.nav-btn svg{width:14px;height:14px;flex-shrink:0;}
+.nav-btn-back{color:var(--hotstar);border-color:rgba(31,128,224,.25);}
+.nav-btn-back:hover{border-color:rgba(31,128,224,.5);color:#4fa8f0;}
+
+/* CHANNEL HEADER */
+.ch-bar{position:relative;z-index:1;background:var(--bg2);border-bottom:1px solid var(--border);padding:18px 24px;display:flex;align-items:center;gap:16px;animation:fadeUp .35s ease both;}
+.ch-icon{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,#1f80e0,#00c8e0);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;}
+.ch-icon img{width:100%;height:100%;object-fit:contain;padding:8px;}
+.ch-info{flex:1;min-width:0;}
+.ch-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--text);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:#e63946;color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;padding:3px 10px;border-radius:20px;font-family:'DM Sans',sans-serif;}
+.ch-sub{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px;}
+.ctag{font-size:10px;font-weight:600;padding:2px 9px;border-radius:12px;background:rgba(31,128,224,.1);border:1px solid rgba(31,128,224,.2);color:var(--hotstar);}
+.ctag-cyan{background:rgba(0,200,224,.08);border-color:rgba(0,200,224,.2);color:var(--hotstar2);}
+.ctag-green{background:rgba(6,214,160,.08);border-color:rgba(6,214,160,.2);color:var(--green);}
+.ctag-dim{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--muted2);}
+
+/* PLAYER */
+.player-section{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:24px 20px 0;}
+.player-wrap{background:#000;border-radius:18px;overflow:hidden;border:1px solid rgba(31,128,224,.12);box-shadow:0 20px 80px rgba(0,0,0,.6),0 0 0 1px rgba(31,128,224,.06);animation:fadeUp .35s .1s ease both;}
+.player-aspect{position:relative;width:100%;padding-bottom:56.25%;}
+.player-aspect video{position:absolute;inset:0;width:100%;height:100%;background:#000;display:none;}
+
+/* Loading overlay */
+.p-loading{position:absolute;inset:0;background:linear-gradient(135deg,#07070d,#0f0f1a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;z-index:10;transition:opacity .35s;}
+.p-loading.hidden{opacity:0;pointer-events:none;}
+.p-logo{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:3px;background:linear-gradient(135deg,#1f80e0,#00c8e0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.p-ring{width:48px;height:48px;border:3px solid rgba(31,128,224,.18);border-top-color:#1f80e0;border-radius:50%;animation:spin 1s linear infinite;}
+.p-txt{font-size:12px;color:var(--muted2);font-weight:600;letter-spacing:.5px;}
+
+/* Error overlay */
+.p-error{position:absolute;inset:0;background:linear-gradient(135deg,#07070d,#0e0e1a);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:10;padding:28px;text-align:center;}
+.p-error.show{display:flex;}
+.p-err-icon{font-size:42px;}
+.p-err-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--text);}
+.p-err-sub{font-size:13px;color:var(--muted2);line-height:1.6;max-width:300px;}
+.p-err-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--hotstar),var(--hotstar2));color:#fff;font-weight:700;font-size:13px;padding:10px 22px;border-radius:10px;border:none;cursor:pointer;margin-top:6px;transition:transform .15s;}
+.p-err-btn:hover{transform:translateY(-1px);}
+.p-err-btn:active{transform:scale(.97);}
+
+/* STREAM INPUT — removed (auto-load mode) */
+
+/* INFO CARDS */
+.info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;animation:fadeUp .35s .2s ease both;}
+.info-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.ic-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;}
+.ic-blue{background:rgba(31,128,224,.1);border:1px solid rgba(31,128,224,.15);}
+.ic-green{background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.12);}
+.ic-red{background:rgba(230,57,70,.09);border:1px solid rgba(230,57,70,.12);}
+.ic-gold{background:rgba(255,193,7,.07);border:1px solid rgba(255,193,7,.1);}
+.ic-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:2px;}
+.ic-val{font-size:14px;font-weight:700;color:var(--text);}
+
+/* HOW TO WATCH */
+.how-section{max-width:1100px;margin:20px auto 0;padding:0 20px;animation:fadeUp .35s .25s ease both;}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);margin-bottom:12px;}
+.sec-title span{color:var(--hotstar);}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.how-step{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:flex-start;}
+.step-n{font-family:'Bebas Neue',sans-serif;font-size:30px;color:rgba(31,128,224,.25);line-height:1;flex-shrink:0;}
+.step-body strong{font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:3px;}
+.step-body p{font-size:12px;color:var(--muted2);line-height:1.55;}
+
+/* QUICK CHANNELS */
+.quick-section{max-width:1100px;margin:20px auto 40px;padding:0 20px;animation:fadeUp .35s .3s ease both;}
+.quick-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:9px;}
+.qc{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:13px 12px;text-decoration:none;display:flex;align-items:center;gap:9px;transition:all .2s;}
+.qc:hover{border-color:rgba(255,255,255,.12);background:var(--bg3);transform:translateY(-2px);}
+.qc:active{transform:scale(.97);}
+.qc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.qc-name{font-size:12px;font-weight:700;color:var(--text);line-height:1.2;}
+.qc-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+
+footer{text-align:center;padding:20px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);letter-spacing:.5px;line-height:1.8;position:relative;z-index:1;}
+
+/* TOUCH */
+a,button{-webkit-tap-highlight-color:rgba(31,128,224,.12);}
+
+/* TABLET */
+@media(max-width:900px){
+  .info-grid{grid-template-columns:repeat(2,1fr);}
+  .how-grid{grid-template-columns:repeat(2,1fr);}
+  .quick-grid{grid-template-columns:repeat(3,1fr);}
+}
+
+/* LARGE MOBILE */
+@media(max-width:600px){
+  .top-bar{font-size:10.5px;padding:6px 10px;}
+  nav{padding:0 12px;height:52px;}
+  .nav-title{font-size:18px;letter-spacing:2px;}
+  .nav-formerly{display:none;}
+  .nav-btn span{display:none;}
+  .nav-btn{padding:6px 10px;}
+  .ch-bar{padding:13px 14px;gap:12px;}
+  .ch-icon{width:44px;height:44px;border-radius:11px;}
+  .ch-name{font-size:18px;}
+  .player-section{padding:12px 12px 0;}
+  .player-wrap{border-radius:12px;}
+  .info-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .info-card{padding:11px 13px;gap:9px;}
+  .ic-val{font-size:13px;}
+  .how-grid{grid-template-columns:1fr;}
+  .quick-grid{grid-template-columns:repeat(2,1fr);}
+  .how-section,.quick-section{padding:0 12px;margin-top:14px;}
+  .quick-section{margin-bottom:28px;}
+}
+
+@media(max-width:480px){
+  nav{height:48px;}
+  .nav-title{font-size:16px;letter-spacing:1.5px;}
+  .ch-name{font-size:16px;letter-spacing:1px;}
+  .quick-grid{grid-template-columns:repeat(2,1fr);}
+  .player-wrap{border-radius:10px;}
+  .how-grid{grid-template-columns:1fr;}
+}
+
+@media(max-width:379px){
+  nav{height:44px;}
+  .nav-title{font-size:14px;}
+  .ch-bar{padding:10px 12px;}
+  .ch-icon{width:38px;height:38px;border-radius:10px;}
+  .ch-name{font-size:14px;}
+  .info-grid{grid-template-columns:repeat(2,1fr);}
+  .quick-grid{grid-template-columns:repeat(2,1fr);}
+  .ic-val{font-size:12px;}
+  .qc-name{font-size:11px;}
+  footer{font-size:10px;padding:14px 10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <a href="https://instagram.com/icn.rishi" target="_blank">
+    <span class="live-pulse"></span>
+    🏏 IPL 2026 starts 28th March — Follow @icn.rishi for free stream links every match day
+  </a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div>
+      <div class="nav-title"><span class="grad">CRICKET</span><span class="white">TV</span></div>
+      <div class="nav-formerly">formerly ICONIC TV</div>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-btn nav-btn-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>Back</span>
+    </a>
+    <a href="https://instagram.com/icn.rishi" target="_blank" class="nav-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      <span>@icn.rishi</span>
+    </a>
+  </div>
+</nav>
+
+<!-- CHANNEL HEADER -->
+<div class="ch-bar">
+  <div class="ch-icon">
+    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/Jio_Hotstar_logo.svg/200px-Jio_Hotstar_logo.svg.png"
+         alt="JioHotstar"
+         onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:14px;letter-spacing:1px;color:#fff\'>JH</span>';">
+  </div>
+  <div class="ch-info">
+    <div class="ch-name">
+      JioHotstar
+      <span class="live-badge"><span class="live-pulse" style="width:5px;height:5px;"></span> LIVE</span>
+    </div>
+    <div class="ch-sub">
+      <span class="ctag">IPL 2026</span>
+      <span class="ctag ctag-cyan">4K UHD</span>
+      <span class="ctag ctag-green">Free Tier</span>
+      <span class="ctag ctag-dim">Star Sports 1 · 2 · Hindi</span>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER -->
+<div class="player-section">
+
+  <div class="player-wrap">
+    <div class="player-aspect">
+
+      <!-- Loading -->
+      <div class="p-loading" id="pLoading">
+        <div class="p-logo">JioHotstar</div>
+        <div class="p-ring"></div>
+        <div class="p-txt">Connecting to stream…</div>
+      </div>
+
+      <!-- Error / retry -->
+      <div class="p-error" id="pError">
+        <div class="p-err-icon">📡</div>
+        <div class="p-err-title">Stream Unavailable</div>
+        <div class="p-err-sub">The stream could not be loaded. It may not be live yet — check back closer to match time.</div>
+        <button class="p-err-btn" onclick="retryStream()">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          Retry Stream
+        </button>
+      </div>
+
+      <!-- Video -->
+      <video
+        id="mainPlayer"
+        controls
+        playsinline
+        webkit-playsinline
+        preload="none"
+        style="position:absolute;inset:0;width:100%;height:100%;background:#000;display:none;"
+      ></video>
+
+    </div>
+  </div>
+
+
+
+  <!-- INFO CARDS -->
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="ic-icon ic-blue">📺</div>
+      <div><div class="ic-label">Channel</div><div class="ic-val">JioHotstar</div></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon ic-gold">⭐</div>
+      <div><div class="ic-label">Quality</div><div class="ic-val">Up to 4K</div></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon ic-green">✅</div>
+      <div><div class="ic-label">Cost</div><div class="ic-val">Free Tier</div></div>
+    </div>
+    <div class="info-card">
+      <div class="ic-icon ic-red">🏏</div>
+      <div><div class="ic-label">Tournament</div><div class="ic-val">IPL 2026</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- HOW TO WATCH -->
+<div class="how-section" style="margin-top:20px;">
+  <div class="sec-title">How to <span>Watch</span></div>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="step-n">1</div>
+      <div class="step-body"><strong>Stream auto-loads</strong><p>The live stream starts automatically when you open this page — no URL needed.</p></div>
+    </div>
+    <div class="how-step">
+      <div class="step-n">2</div>
+      <div class="step-body"><strong>Wait for buffer</strong><p>Give it a few seconds to connect. The spinner will disappear once the stream is ready.</p></div>
+    </div>
+    <div class="how-step">
+      <div class="step-n">3</div>
+      <div class="step-body"><strong>Tap Play</strong><p>On mobile, tap the video once to reveal the play button, then tap play to start.</p></div>
+    </div>
+    <div class="how-step">
+      <div class="step-n">4</div>
+      <div class="step-body"><strong>Go fullscreen</strong><p>Tap the fullscreen button on the player for the best experience on mobile or desktop.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUICK CHANNELS -->
+<div class="quick-section">
+  <div class="sec-title">Other Free <span style="color:var(--accent);">Channels</span></div>
+  <div class="quick-grid">
+    <a href="jiotv.html" class="qc">
+      <div class="qc-dot" style="background:#0052ff;"></div>
+      <div><div class="qc-name">JioTV</div><div class="qc-sub">Star Sports 1 · 2</div></div>
+    </a>
+    <a href="starsports.html" class="qc">
+      <div class="qc-dot" style="background:#f72585;"></div>
+      <div><div class="qc-name">Star Sports</div><div class="qc-sub">Select · Hindi</div></div>
+    </a>
+    <a href="sonyliv.html" class="qc">
+      <div class="qc-dot" style="background:#e63946;"></div>
+      <div><div class="qc-name">Sony Sports</div><div class="qc-sub">Sports 1 · 2</div></div>
+    </a>
+    <a href="ddsports.html" class="qc">
+      <div class="qc-dot" style="background:#06d6a0;"></div>
+      <div><div class="qc-name">DD Sports</div><div class="qc-sub">100% Free</div></div>
+    </a>
+    <a href="youtube.html" class="qc">
+      <div class="qc-dot" style="background:#ff0000;"></div>
+      <div><div class="qc-name">YouTube</div><div class="qc-sub">Highlights · Live</div></div>
+    </a>
+    <a href="index.html#channels" class="qc">
+      <div class="qc-dot" style="background:var(--muted);"></div>
+      <div><div class="qc-name">All Channels</div><div class="qc-sub">View all →</div></div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  &copy; 2026 icn.rishi · Watch Free Live Cricket · IPL 2026<br>
+  Not affiliated with BCCI, IPL, JioHotstar, Star Sports or Reliance Jio
+</footer>
+
+<script>
+(function(){
+  var STREAM_URL = 'yourname.m3u8';
+
+  var hlsInst = null;
+  var video   = document.getElementById('mainPlayer');
+  var pLoad   = document.getElementById('pLoading');
+  var pErr    = document.getElementById('pError');
+
+  function showLoading(){
+    pLoad.classList.remove('hidden');
+    pErr.classList.remove('show');
+    video.style.display = 'none';
+  }
+  function showError(){
+    pLoad.classList.add('hidden');
+    pErr.classList.add('show');
+    video.style.display = 'none';
+  }
+  function showPlayer(){
+    pLoad.classList.add('hidden');
+    pErr.classList.remove('show');
+    video.style.display = 'block';
+  }
+
+  function loadStream(url){
+    if(hlsInst){ hlsInst.destroy(); hlsInst = null; }
+    video.removeAttribute('src');
+    video.load();
+    showLoading();
+
+    var isHLS = url.indexOf('.m3u8') !== -1 || url.indexOf('m3u8') !== -1;
+
+    // Safari / iOS native HLS
+    if(isHLS && video.canPlayType('application/vnd.apple.mpegurl')){
+      video.src = url;
+      video.addEventListener('loadedmetadata', function(){ showPlayer(); video.play().catch(function(){}); }, {once:true});
+      video.addEventListener('error', function(){ showError(); }, {once:true});
+      return;
+    }
+
+    // HLS.js (Chrome, Firefox, Android WebView)
+    if(isHLS && typeof Hls !== 'undefined' && Hls.isSupported()){
+      hlsInst = new Hls({ enableWorker:true, lowLatencyMode:true, backBufferLength:90 });
+      hlsInst.loadSource(url);
+      hlsInst.attachMedia(video);
+      hlsInst.on(Hls.Events.MANIFEST_PARSED, function(){
+        showPlayer();
+        video.play().catch(function(){});
+      });
+      hlsInst.on(Hls.Events.ERROR, function(e, d){
+        if(d.fatal){ showError(); hlsInst.destroy(); hlsInst = null; }
+      });
+      return;
+    }
+
+    // Fallback — direct src (MP4 / WebM)
+    video.src = url;
+    video.addEventListener('loadedmetadata', function(){ showPlayer(); video.play().catch(function(){}); }, {once:true});
+    video.addEventListener('error', function(){ showError(); }, {once:true});
+  }
+
+  // Retry button
+  window.retryStream = function(){ loadStream(STREAM_URL); };
+
+  // Auto-load on page ready
+  loadStream(STREAM_URL);
+})();
+</script>
+
+</body>
+</html>
