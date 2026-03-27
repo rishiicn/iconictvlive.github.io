@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RCB vs SRH · IPL 2026 Live | icn.rishi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest/dist/hls.min.js"></script>
+<style>
+:root{
+  --bg:#08080e;--bg2:#100f16;--bg3:#16141f;--bg4:#1c1928;
+  --rcb:#e63946;--rcb2:#ff5c67;
+  --srh:#f97316;--srh2:#fbbf24;
+  --text:#f0f0f5;--muted:#6b6b8a;--muted2:#9090aa;
+  --border:rgba(255,255,255,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden;min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at 5% 40%,rgba(230,57,70,.09) 0%,transparent 45%),
+             radial-gradient(ellipse at 95% 40%,rgba(249,115,22,.09) 0%,transparent 45%);
+  pointer-events:none;z-index:0;}
+
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+
+/* TOP BAR */
+.top-bar{position:relative;z-index:200;
+  background:linear-gradient(90deg,var(--rcb) 0%,#2a0a0e 48%,#1a0a00 52%,var(--srh) 100%);
+  padding:7px 20px;display:flex;align-items:center;justify-content:center;gap:8px;
+  font-size:12px;font-weight:700;letter-spacing:.6px;}
+.top-bar a{color:#fff;text-decoration:none;display:flex;align-items:center;gap:6px;}
+.live-pulse{width:7px;height:7px;background:#fff;border-radius:50%;animation:pulse 1.4s ease-in-out infinite;flex-shrink:0;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:60px;background:rgba(8,8,14,.97);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);}
+.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;display:flex;align-items:baseline;gap:6px;}
+.nav-title .grad{background:linear-gradient(135deg,#e63946,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.nav-title .white{color:#fff;}
+.nav-formerly{font-size:9px;color:var(--muted);letter-spacing:1px;font-family:'DM Sans',sans-serif;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-btn{display:flex;align-items:center;gap:6px;color:var(--muted2);font-size:12px;font-weight:600;
+  text-decoration:none;border:1px solid var(--border);padding:7px 14px;border-radius:20px;transition:all .2s;}
+.nav-btn:hover{color:var(--text);border-color:rgba(255,255,255,.15);}
+.nav-btn svg{width:14px;height:14px;flex-shrink:0;}
+.nav-btn-back{color:var(--rcb);border-color:rgba(230,57,70,.25);}
+.nav-btn-back:hover{border-color:rgba(230,57,70,.5);color:var(--rcb2);}
+
+/* MATCHUP HERO — slim compact bar */
+.match-hero{position:relative;z-index:1;overflow:hidden;
+  background:linear-gradient(180deg,#0e0a0f 0%,var(--bg) 100%);
+  border-bottom:1px solid rgba(255,255,255,.05);}
+.match-hero-inner{max-width:1100px;margin:0 auto;padding:10px 20px;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;}
+
+.team-panel{display:flex;flex-direction:row;align-items:center;gap:8px;}
+.team-panel.left{justify-content:flex-start;}
+.team-panel.right{justify-content:flex-end;flex-direction:row-reverse;}
+.team-logo-wrap{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.team-logo-wrap img{width:100%;height:100%;object-fit:contain;}
+.team-name-big{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;line-height:1;}
+.team-full{font-size:10px;color:var(--muted2);letter-spacing:.3px;}
+.team-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;
+  letter-spacing:.8px;padding:2px 7px;border-radius:20px;}
+.badge-rcb{background:rgba(230,57,70,.15);border:1px solid rgba(230,57,70,.3);color:var(--rcb2);}
+.badge-srh{background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);color:var(--srh);}
+.team-info{display:flex;flex-direction:column;gap:2px;}
+.team-panel.right .team-info{align-items:flex-end;}
+
+.vs-center{text-align:center;flex-shrink:0;}
+.live-chip{display:inline-flex;align-items:center;gap:4px;background:#e63946;color:#fff;
+  font-size:8px;font-weight:700;letter-spacing:1.5px;padding:2px 6px;border-radius:20px;margin-bottom:2px;}
+.vs-txt{font-family:'Bebas Neue',sans-serif;font-size:16px;
+  background:linear-gradient(135deg,var(--rcb),var(--srh));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:2px;line-height:1;}
+.match-meta{font-size:8px;color:var(--muted);text-align:center;margin-top:2px;line-height:1.4;}
+
+.hero-divider{height:2px;
+  background:linear-gradient(90deg,var(--rcb) 0%,rgba(230,57,70,0) 45%,rgba(249,115,22,0) 55%,var(--srh) 100%);}
+
+/* PLAYER */
+.player-section{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:20px 20px 0;}
+.player-wrap{background:#000;border-radius:18px 18px 0 0;overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  box-shadow:0 20px 80px rgba(0,0,0,.7),-4px 0 30px rgba(230,57,70,.07),4px 0 30px rgba(249,115,22,.07);
+  animation:fadeUp .35s .1s ease both;}
+.player-aspect{position:relative;width:100%;padding-bottom:56.25%;}
+
+.p-loading{position:absolute;inset:0;
+  background:linear-gradient(135deg,#0c050a,#080508,#050408);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  z-index:10;transition:opacity .35s;}
+.p-loading.hidden{opacity:0;pointer-events:none;}
+.p-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;
+  background:linear-gradient(90deg,var(--rcb),var(--srh),var(--rcb));
+  background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 2.5s linear infinite;}
+.p-ring{width:48px;height:48px;border-radius:50%;
+  border:3px solid rgba(255,255,255,.07);
+  border-top-color:var(--rcb);border-right-color:var(--srh);
+  animation:spin 1s linear infinite;}
+.p-txt{font-size:12px;color:var(--muted2);font-weight:600;letter-spacing:.5px;}
+
+.p-error{position:absolute;inset:0;background:linear-gradient(135deg,#0c050a,#080508);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:10px;z-index:10;padding:28px;text-align:center;}
+.p-error.show{display:flex;}
+.p-err-icon{font-size:42px;}
+.p-err-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:var(--text);}
+.p-err-sub{font-size:13px;color:var(--muted2);line-height:1.6;max-width:300px;}
+.p-err-btn{display:inline-flex;align-items:center;gap:8px;
+  background:linear-gradient(135deg,var(--rcb),var(--srh));
+  color:#fff;font-weight:700;font-size:13px;padding:11px 24px;border-radius:10px;
+  border:none;cursor:pointer;margin-top:6px;transition:transform .15s;letter-spacing:.5px;}
+.p-err-btn:hover{transform:translateY(-1px);}
+.p-err-btn:active{transform:scale(.97);}
+
+/* TEAM STATS */
+.stats-strip{max-width:1100px;margin:14px auto 0;padding:0 20px;animation:fadeUp .35s .15s ease both;}
+.stats-inner{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.team-stat-card{border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;}
+.tsc-rcb{background:linear-gradient(135deg,rgba(230,57,70,.12),rgba(230,57,70,.04));border:1px solid rgba(230,57,70,.2);}
+.tsc-srh{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.2);}
+.tsc-icon{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.tsc-icon img{width:100%;height:100%;object-fit:contain;}
+.tsc-body{flex:1;min-width:0;}
+.tsc-team{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;}
+.tsc-rcb .tsc-team{color:var(--rcb2);}
+.tsc-srh .tsc-team{color:var(--srh);}
+.tsc-stats{display:flex;gap:14px;margin-top:5px;flex-wrap:wrap;}
+.tsc-stat{font-size:10px;color:var(--muted2);}
+.tsc-stat strong{font-size:13px;font-weight:700;color:var(--text);display:block;}
+
+/* HOW TO WATCH */
+.how-section{max-width:1100px;margin:20px auto 0;padding:0 20px;animation:fadeUp .35s .2s ease both;}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);margin-bottom:12px;}
+.sec-title .rcb{color:var(--rcb);}
+.sec-title .srh{color:var(--srh);}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.how-step{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;gap:12px;align-items:flex-start;}
+.step-n{font-family:'Bebas Neue',sans-serif;font-size:30px;line-height:1;flex-shrink:0;}
+.step-n.rcb{color:rgba(230,57,70,.3);}
+.step-n.srh{color:rgba(249,115,22,.3);}
+.step-body strong{font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:3px;}
+.step-body p{font-size:12px;color:var(--muted2);line-height:1.55;}
+
+/* CHANNELS */
+.quick-section{max-width:1100px;margin:20px auto 40px;padding:0 20px;animation:fadeUp .35s .25s ease both;}
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.qc{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;
+  text-decoration:none;display:flex;align-items:center;gap:10px;transition:all .2s;}
+.qc:hover{background:var(--bg3);transform:translateY(-2px);}
+.qc:active{transform:scale(.97);}
+.qc-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.qc-name{font-size:13px;font-weight:700;color:var(--text);line-height:1.2;}
+.qc-sub{font-size:10px;color:var(--muted);margin-top:2px;}
+
+footer{text-align:center;padding:20px;font-size:11px;color:var(--muted);
+  border-top:1px solid var(--border);letter-spacing:.5px;line-height:1.8;position:relative;z-index:1;}
+
+a,button{-webkit-tap-highlight-color:transparent;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .stats-inner{grid-template-columns:1fr 1fr;}
+  .how-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:680px){
+  .match-hero-inner{gap:8px;padding:8px 14px;}
+  .team-logo-wrap{width:28px;height:28px;}
+  .team-full{display:none;}
+}
+@media(max-width:600px){
+  .top-bar{font-size:10.5px;padding:6px 10px;}
+  nav{padding:0 12px;height:52px;}
+  .nav-title{font-size:18px;letter-spacing:2px;}
+  .nav-formerly{display:none;}
+  .nav-btn span{display:none;}
+  .nav-btn{padding:6px 10px;}
+  .player-section{padding:12px 12px 0;}
+  .player-wrap{border-radius:12px;}
+  .stats-strip{padding:0 12px;}
+  .how-grid{grid-template-columns:1fr 1fr;}
+  .how-section,.quick-section{padding:0 12px;margin-top:14px;}
+  .quick-section{margin-bottom:28px;}
+}
+@media(max-width:480px){
+  nav{height:48px;}
+  .match-hero-inner{gap:6px;padding:7px 10px;}
+  .team-logo-wrap{width:24px;height:24px;}
+  .team-name-big{font-size:18px;}
+  .vs-txt{font-size:18px;}
+  .team-badge{display:none;}
+  .stats-inner{grid-template-columns:1fr;}
+  .how-grid{grid-template-columns:1fr;}
+  .quick-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:379px){
+  nav{height:44px;}
+  .team-name-big{font-size:15px;}
+}
+</style>
+</head>
+<body>
+
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-brand">
+    <div>
+      <div class="nav-title"><span class="grad">CRICKET</span><span class="white">TV</span></div>
+      <div class="nav-formerly">formerly ICONIC TV</div>
+    </div>
+  </a>
+  <div class="nav-right">
+    <a href="index.html" class="nav-btn nav-btn-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      <span>Back</span>
+    </a>
+    <a href="https://instagram.com/icn.rishi" target="_blank" class="nav-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>
+      <span>@icn.rishi</span>
+    </a>
+  </div>
+</nav>
+
+<!-- BROWSER NOTE -->
+<div class="browser-note">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;color:#fbbf24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <span><strong>Works on all browsers</strong> &nbsp;·&nbsp; Instagram &amp; WhatsApp users will be prompted to open in Chrome / Safari</span>
+  <button onclick="this.parentElement.style.display='none'" style="background:none;border:none;color:rgba(255,255,255,.35);cursor:pointer;font-size:16px;line-height:1;padding:0 2px;margin-left:4px;">✕</button>
+</div>
+
+<style>
+.browser-note{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(251,191,36,.07);
+  border-bottom:1px solid rgba(251,191,36,.15);
+  padding:8px 20px;
+  font-size:11.5px;color:rgba(255,255,255,.65);
+  letter-spacing:.2px;line-height:1.4;
+  position:relative;z-index:50;
+}
+.browser-note strong{color:#fbbf24;font-weight:700;}
+</style>
+
+
+
+<!-- PLAYER -->
+<div class="player-section">
+
+  <div class="player-wrap" id="playerWrap">
+    <div class="player-aspect" id="playerAspect">
+
+      <iframe id="liveIframe"
+        src="about:blank"
+        style="position:absolute;inset:0;width:100%;height:100%;border:none;"
+        allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+        allowfullscreen referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+
+      <!-- 5-second buffer overlay shown after play tap -->
+      <div id="bufferOverlay" style="display:none;position:absolute;inset:0;z-index:20;background:rgba(8,8,14,.88);flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:none;">
+        <div style="width:52px;height:52px;border-radius:50%;border:3px solid rgba(255,255,255,.08);border-top-color:#e63946;border-right-color:#f97316;animation:spin 1s linear infinite;"></div>
+        <div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.6);font-weight:600;letter-spacing:.5px;">Loading…</div>
+      </div>
+
+      <!-- Pre-play overlay: IPL banner + play button shown ONLY before first play, removed forever after -->
+      <div id="centerOverlay" onclick="onScreenClick()">
+        <img id="bannerImg"
+          src="https://brightcove.iplt20.com/output/input/6391650658112-1774497042.jpg"
+          alt="IPL 2026 Live"
+          draggable="false"
+          onerror="this.style.opacity='0'">
+        <div id="bannerVignette"></div>
+        <div id="bannerLiveBadge">
+          <span class="bpulse"></span>
+          LIVE &middot; IPL 2026
+        </div>
+        <div id="centerRing">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="44" height="44">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Silent tap zone after first play — invisible, no UI -->
+      <div id="tapZone" style="display:none;position:absolute;inset:0;z-index:8;cursor:pointer;" onclick="onScreenClick()"></div>
+
+    </div>
+  </div>
+
+  <!-- CONTROL BAR -->
+  <div class="ui-control-bar">
+
+    <!-- LEFT: Play/Pause -->
+    <button class="ui-btn ui-btn-play" id="btnPlay" onclick="togglePlay()" title="Play / Pause">
+      <svg id="playIcon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <span id="playLabel">Play</span>
+    </button>
+
+    <!-- CENTER: channel info -->
+    <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--rcb2);letter-spacing:.5px;flex:1;justify-content:center;">
+      <span style="width:7px;height:7px;background:var(--rcb);border-radius:50%;display:inline-block;animation:pulse 1.2s ease-in-out infinite;flex-shrink:0;"></span>
+      <span class="bar-ch-label">Star Sports 1 Hindi · Live</span>
+    </div>
+
+    <!-- RIGHT: Quality + Fullscreen -->
+    <div style="display:flex;align-items:center;gap:8px;">
+
+      <div class="quality-wrap" id="qualityWrap">
+        <button class="ui-btn ui-btn-q" onclick="toggleQualityMenu(event)" title="Quality">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.3.06-.61.06-.94s-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96a6.94 6.94 0 00-1.62-.94l-.36-2.54A.484.484 0 0014 2h-4a.484.484 0 00-.48.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.48.48 0 00-.59.22L2.74 8.87a.47.47 0 00.12.61l2.03 1.58c-.05.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58a.47.47 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.37 1.03.7 1.62.94l.36 2.54c.05.24.27.41.49.41h4c.22 0 .44-.17.49-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.47.47 0 00-.12-.61l-2.03-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          <span id="curQuality">Auto</span>
+        </button>
+        <div class="quality-menu" id="qualityMenu" style="display:none;">
+          <button class="q-opt active" onclick="setQuality(this,'Auto','https://allrounder-live2.pages.dev/star/star-1-hindi')">Auto</button>
+          <button class="q-opt" onclick="setQuality(this,'1080p','https://allrounder-live2.pages.dev/star/star-1-hindi?q=1080')">1080p</button>
+          <button class="q-opt" onclick="setQuality(this,'720p','https://allrounder-live2.pages.dev/star/star-1-hindi?q=720')">720p</button>
+          <button class="q-opt" onclick="setQuality(this,'480p','https://allrounder-live2.pages.dev/star/star-1-hindi?q=480')">480p</button>
+          <button class="q-opt" onclick="setQuality(this,'360p','https://allrounder-live2.pages.dev/star/star-1-hindi?q=360')">360p</button>
+        </div>
+      </div>
+
+      <button class="ui-btn ui-btn-refresh" id="btnRefresh" onclick="refreshStream()" title="Refresh">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        <span class="refresh-label">Refresh</span>
+      </button>
+
+      <button class="ui-btn ui-btn-fs" onclick="goFullscreen()" title="Fullscreen">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        <span class="fs-label">Fullscreen</span>
+      </button>
+
+    </div>
+  </div>
+
+</div>
+
+<style>
+/* ── PLAYER UI ── */
+.player-wrap{position:relative;}
+
+/* ── PRE-PLAY OVERLAY — visible only before first tap ── */
+#centerOverlay{
+  position:absolute;inset:0;z-index:9;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  background:#000;
+  -webkit-tap-highlight-color:transparent;
+  overflow:hidden;
+}
+#bannerImg{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  display:block;
+  /* 85% opacity so overlay elements read clearly */
+  opacity:.85;
+  transition:opacity .3s;
+}
+#centerOverlay:hover #bannerImg{ opacity:.92; }
+
+/* gradient vignette so play button pops */
+#bannerVignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, rgba(0,0,0,.15) 0%, rgba(0,0,0,.55) 100%);
+  pointer-events:none;
+}
+
+#centerRing{
+  position:relative;z-index:2;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(230,57,70,.88);
+  border:2.5px solid rgba(255,255,255,.45);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;
+  box-shadow:0 0 0 14px rgba(230,57,70,.18), 0 8px 40px rgba(0,0,0,.7), 0 0 60px rgba(230,57,70,.3);
+  transition:transform .15s, box-shadow .15s;
+  pointer-events:none;
+}
+/* IPL LIVE badge above play button */
+#bannerLiveBadge{
+  position:absolute;z-index:2;
+  top:50%;left:50%;
+  transform:translate(-50%,-80px);
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(8,8,14,.75);border:1px solid rgba(230,57,70,.45);
+  padding:4px 12px;border-radius:20px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:1.2px;color:#fff;white-space:nowrap;
+  pointer-events:none;
+  backdrop-filter:blur(6px);
+}
+#bannerLiveBadge .bpulse{
+  width:6px;height:6px;background:#e63946;border-radius:50%;
+  animation:pulse 1.4s ease-in-out infinite;flex-shrink:0;
+}
+
+#centerOverlay:active #centerRing,
+#centerOverlay:hover  #centerRing{
+  transform:scale(1.1);
+  box-shadow:0 0 0 20px rgba(230,57,70,.14), 0 8px 40px rgba(0,0,0,.7), 0 0 80px rgba(230,57,70,.35);
+}
+
+/* ── Mobile viewport-aware sizing ── */
+@media(max-width:600px){
+  #centerRing{width:64px;height:64px;}
+  #centerRing svg{width:32px;height:32px;}
+  #bannerLiveBadge{font-size:10px;transform:translate(-50%,-64px);}
+}
+@media(max-width:379px){
+  #centerRing{width:54px;height:54px;}
+  #centerRing svg{width:26px;height:26px;}
+  #bannerLiveBadge{font-size:9px;transform:translate(-50%,-56px);}
+}
+@keyframes btnFlash{0%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.9)}100%{opacity:0;transform:scale(1.15);}}
+
+/* CONTROL BAR */
+.ui-control-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:var(--bg2);border:1px solid var(--border);border-top:none;
+  border-radius:0 0 18px 18px;padding:10px 14px;flex-wrap:nowrap;
+}
+.ui-btn{
+  display:flex;align-items:center;gap:5px;
+  background:var(--bg3);border:1px solid var(--border);
+  color:var(--muted2);font-size:11px;font-weight:700;letter-spacing:.8px;
+  padding:7px 14px;border-radius:20px;cursor:pointer;
+  transition:all .18s;white-space:nowrap;font-family:'DM Sans',sans-serif;
+  flex-shrink:0;
+}
+.ui-btn:hover{background:var(--bg4);color:var(--text);border-color:rgba(255,255,255,.15);}
+.ui-btn:active{transform:scale(.95);}
+
+.ui-btn-play{color:var(--text);border-color:rgba(255,255,255,.12);}
+.ui-btn-play.playing{color:var(--rcb2);border-color:rgba(230,57,70,.3);background:rgba(230,57,70,.08);}
+
+.quality-wrap{position:relative;}
+.ui-btn-q{color:var(--muted2);}
+.quality-menu{
+  position:absolute;bottom:calc(100% + 8px);right:0;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:12px;overflow:hidden;min-width:90px;
+  box-shadow:0 8px 30px rgba(0,0,0,.6);z-index:100;
+}
+.q-opt{
+  display:block;width:100%;text-align:left;
+  padding:9px 14px;font-size:11px;font-weight:700;letter-spacing:.6px;
+  color:var(--muted2);background:none;border:none;cursor:pointer;
+  font-family:'DM Sans',sans-serif;transition:background .15s,color .15s;
+}
+.q-opt:hover{background:var(--bg4);color:var(--text);}
+.q-opt.active{color:var(--srh);}
+.ui-btn-fs{color:var(--muted2);}
+
+/* FULLSCREEN — desktop 16:9 */
+#playerWrap:-webkit-full-screen,
+#playerWrap:-moz-full-screen,
+#playerWrap:fullscreen{
+  width:100vw !important;height:100vh !important;
+  background:#000;display:flex;flex-direction:column;
+  align-items:stretch;justify-content:center;
+}
+#playerWrap:fullscreen .player-aspect,
+#playerWrap:-webkit-full-screen .player-aspect,
+#playerWrap:-moz-full-screen .player-aspect{
+  width:100%;flex:1;padding-bottom:0;
+  height:56.25vw;max-height:100vh;
+}
+
+/* Mobile fake-fullscreen — 90% of screen, rotated 16:9 */
+#mobileFs{
+  display:none;
+  position:fixed;inset:0;z-index:9000;
+  background:rgba(0,0,0,.96);
+  align-items:center;justify-content:center;
+}
+#mobileFs.active{ display:flex; }
+#mobileFs iframe{
+  position:absolute;
+  /* 90% of viewport: width=90vh height=56.25% of that = 50.625vh */
+  width:90vh;height:50.625vh;
+  border:none;
+  transform:rotate(90deg);
+  transform-origin:center center;
+  top:50%;left:50%;
+  margin-top:-25.3125vh; /* half of 50.625vh */
+  margin-left:-45vh;     /* half of 90vh */
+}
+#mobileFsClose{
+  position:absolute;top:14px;right:14px;z-index:9001;
+  background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.2);
+  color:#fff;font-size:18px;width:36px;height:36px;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-family:sans-serif;line-height:1;
+}
+
+@media(max-width:520px){
+  .fs-label{display:none;}
+  .refresh-label{display:none;}
+  .bar-ch-label{display:none;}
+  .ui-btn{padding:6px 11px;font-size:10px;}
+}
+</style>
+
+<script>
+var isPlaying  = false;
+var everPlayed = false;   // true after first tap — big play button never comes back
+var liveURL    = 'https://allrounder-live2.pages.dev/star/star-1-hindi';
+var bufferTimer = null;
+
+/* ── Detect Instagram / in-app browser ── */
+var isInAppBrowser = (function(){
+  var ua = navigator.userAgent || '';
+  return /Instagram|FBAN|FBAV|FB_IAB|WhatsApp|Line\/|MicroMessenger|Snapchat/i.test(ua);
+})();
+
+/* ── Auto-redirect to default browser on play tap ── */
+function redirectToDefaultBrowser(){
+  var url = location.href;
+  var ua  = navigator.userAgent || '';
+  var redirected = false;
+
+  // Android: try intent:// scheme to force Chrome/default browser
+  if(/Android/i.test(ua)){
+    try{
+      var intent = 'intent://' + url.replace(/^https?:\/\//, '') +
+        '#Intent;scheme=https;action=android.intent.action.VIEW;end';
+      location.href = intent;
+      redirected = true;
+    }catch(e){}
+  }
+
+  // iOS: try opening with googlechrome:// or x-safari-https://
+  if(!redirected && /iPhone|iPad|iPod/i.test(ua)){
+    // Try Chrome first
+    var chrome = url.replace(/^https/, 'googlechrome').replace(/^http/, 'googlechrome');
+    location.href = chrome;
+    redirected = true;
+  }
+
+  // Fallback: copy link and show instruction overlay
+  setTimeout(function(){
+    // If we're still here (redirect failed), show copy overlay
+    showCopyOverlay(url);
+  }, 1200);
+}
+
+function showCopyOverlay(url){
+  var existing = document.getElementById('copy-overlay');
+  if(existing) return;
+  var d = document.createElement('div');
+  d.id = 'copy-overlay';
+  d.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(8,8,14,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:28px;text-align:center;';
+  d.innerHTML =
+    '<div style="font-size:36px;">🌐</div>' +
+    '<div style="font-family:Bebas Neue,sans-serif;font-size:26px;letter-spacing:2px;color:#fff;">Open in Browser</div>' +
+    '<div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.6;max-width:280px;">Instagram blocks live video.<br>Copy the link and paste it in <strong style="color:#fff;">Chrome</strong> or <strong style="color:#fff;">Safari</strong>.</div>' +
+    '<button id="copy-btn" onclick="doCopy(\'' + encodeURIComponent(url) + '\')" style="padding:13px 28px;background:linear-gradient(135deg,#e63946,#f97316);color:#fff;font-weight:700;font-size:14px;border:none;border-radius:12px;cursor:pointer;letter-spacing:.5px;width:100%;max-width:280px;">Copy Link</button>' +
+    '<div style="font-size:11px;color:rgba(255,255,255,.3);">Then open Chrome / Safari and paste</div>';
+  document.body.appendChild(d);
+}
+
+function doCopy(encodedUrl){
+  var url = decodeURIComponent(encodedUrl);
+  var btn = document.getElementById('copy-btn');
+  try{
+    navigator.clipboard.writeText(url).then(function(){
+      if(btn){ btn.textContent = '✓ Copied! Now open Chrome/Safari'; btn.style.background = '#16a34a'; }
+    });
+  }catch(e){
+    // Fallback for older browsers
+    var ta = document.createElement('textarea');
+    ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e2){}
+    document.body.removeChild(ta);
+    if(btn){ btn.textContent = '✓ Copied! Now open Chrome/Safari'; btn.style.background = '#16a34a'; }
+  }
+}
+
+/* ── Buffer overlay: ALWAYS shows full 5s — never hides early on load ── */
+function showBufferLoading(){
+  clearTimeout(bufferTimer);
+  var buf = document.getElementById('bufferOverlay');
+  if(buf) buf.style.display = 'flex';
+  bufferTimer = setTimeout(hideBufferLoading, 5000);
+}
+function hideBufferLoading(){
+  clearTimeout(bufferTimer);
+  var buf = document.getElementById('bufferOverlay');
+  if(buf) buf.style.display = 'none';
+}
+
+/* ── First tap on big play overlay ── */
+function onScreenClick(){
+  if(isInAppBrowser){
+    redirectToDefaultBrowser();
+    return;
+  }
+  if(!everPlayed) startStream();
+  // after first play: tapZone is invisible and does nothing (no UI)
+}
+
+/* ── Permanently remove big play overlay after first tap ── */
+function removePlayOverlay(){
+  var ov = document.getElementById('centerOverlay');
+  if(ov){
+    ov.style.transition = 'opacity .3s';
+    ov.style.opacity = '0';
+    ov.style.pointerEvents = 'none';
+    setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 350);
+  }
+  // tapZone stays but is fully transparent — no visual, no icon, no dim
+  var tz = document.getElementById('tapZone');
+  if(tz) tz.style.display = 'block';
+}
+
+/* ── Start stream (first time only) ── */
+function startStream(){
+  var iframe   = document.getElementById('liveIframe');
+  var btnPlay  = document.getElementById('btnPlay');
+  var playIcon = document.getElementById('playIcon');
+  var playLbl  = document.getElementById('playLabel');
+
+  everPlayed = true;
+  isPlaying  = true;
+
+  removePlayOverlay();
+
+  if(playIcon) playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+  if(playLbl)  playLbl.textContent = 'Pause';
+  if(btnPlay)  btnPlay.classList.add('playing');
+
+  showBufferLoading();
+  iframe.src = liveURL;
+  // No onload early-hide — buffer always runs full 5s
+}
+
+/* ── Toggle play/pause via bottom bar only (big button never returns) ── */
+function togglePlay(){
+  var iframe   = document.getElementById('liveIframe');
+  var btnPlay  = document.getElementById('btnPlay');
+  var playIcon = document.getElementById('playIcon');
+  var playLbl  = document.getElementById('playLabel');
+
+  if(!everPlayed){ startStream(); return; }
+
+  if(isPlaying){
+    iframe.src = 'about:blank';
+    hideBufferLoading();
+    if(playIcon) playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+    if(playLbl)  playLbl.textContent = 'Play';
+    if(btnPlay)  btnPlay.classList.remove('playing');
+    isPlaying = false;
+  } else {
+    showBufferLoading();
+    iframe.src = liveURL;
+    // No onload early-hide — buffer always runs full 5s
+    if(playIcon) playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+    if(playLbl)  playLbl.textContent = 'Pause';
+    if(btnPlay)  btnPlay.classList.add('playing');
+    isPlaying = true;
+  }
+}
+
+/* ── Refresh ── */
+function refreshStream(){
+  if(!isPlaying) return;
+  var iframe   = document.getElementById('liveIframe');
+  var mfIframe = document.getElementById('mobileFsIframe');
+  showBufferLoading();
+  iframe.src = liveURL;
+  // No onload early-hide — buffer always runs full 5s
+  var mfs = document.getElementById('mobileFs');
+  if(mfs && mfs.classList.contains('active') && mfIframe) mfIframe.src = liveURL;
+  var btn = document.getElementById('btnRefresh');
+  if(btn){
+    btn.style.transition = 'transform .5s ease';
+    btn.style.transform  = 'rotate(360deg)';
+    setTimeout(function(){ btn.style.transform = ''; btn.style.transition = ''; }, 560);
+  }
+}
+
+/* ── Fullscreen: native desktop, CSS-rotate mobile ── */
+function goFullscreen(){
+  var mobile = ('ontouchstart' in window) || window.innerWidth <= 900 ||
+               /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(mobile){ openMobileFs(); return; }
+  var el = document.getElementById('playerWrap');
+  try{
+    if(el.requestFullscreen)            el.requestFullscreen();
+    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if(el.mozRequestFullScreen)    el.mozRequestFullScreen();
+    else if(el.msRequestFullscreen)     el.msRequestFullscreen();
+  }catch(e){}
+}
+
+function openMobileFs(){
+  var overlay  = document.getElementById('mobileFs');
+  var mfIframe = document.getElementById('mobileFsIframe');
+  var mainIframe = document.getElementById('liveIframe');
+  if(!overlay || !mfIframe) return;
+  // Mute main iframe by blanking it — prevents dual audio
+  if(mainIframe) mainIframe.src = 'about:blank';
+  mfIframe.src = isPlaying ? liveURL : 'about:blank';
+  overlay.classList.add('active');
+  try{
+    if(screen.orientation && screen.orientation.lock)
+      screen.orientation.lock('landscape').catch(function(){});
+  }catch(e){}
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileFs(){
+  var overlay    = document.getElementById('mobileFs');
+  var mfIframe   = document.getElementById('mobileFsIframe');
+  var mainIframe = document.getElementById('liveIframe');
+  if(!overlay) return;
+  overlay.classList.remove('active');
+  // Stop mobile FS audio
+  if(mfIframe) mfIframe.src = 'about:blank';
+  // Restore main iframe if was playing
+  if(isPlaying && mainIframe){
+    showBufferLoading();
+    mainIframe.src = liveURL;
+  }
+  try{
+    if(screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+  }catch(e){}
+  document.body.style.overflow = '';
+}
+
+/* ── Quality menu ── */
+function toggleQualityMenu(e){
+  e.stopPropagation();
+  var m = document.getElementById('qualityMenu');
+  m.style.display = m.style.display === 'none' ? 'block' : 'none';
+}
+function setQuality(el, label, url){
+  document.querySelectorAll('.q-opt').forEach(function(b){ b.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('curQuality').textContent = label;
+  document.getElementById('qualityMenu').style.display = 'none';
+  liveURL = url;
+  if(isPlaying){
+    showBufferLoading();
+    var iframe = document.getElementById('liveIframe');
+    iframe.src = url;
+    // No onload early-hide — buffer always runs full 5s
+  }
+}
+document.addEventListener('click', function(){ document.getElementById('qualityMenu').style.display = 'none'; });
+</script>
+
+<!-- TEAM STATS STRIP -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="team-stat-card tsc-rcb">
+      <div class="tsc-icon">
+        <img src="https://documents.iplt20.com/ipl/RCB/Logos/Logooutline/RCBoutline.png" alt="RCB" onerror="this.style.display='none'">
+      </div>
+      <div class="tsc-body">
+        <div class="tsc-team">Royal Challengers</div>
+        <div class="tsc-stats">
+          <div class="tsc-stat"><strong style="color:var(--rcb2);">RED & BLACK</strong>Kit</div>
+          <div class="tsc-stat"><strong>Bengaluru</strong>Home</div>
+          <div class="tsc-stat"><strong style="color:var(--rcb2);">🏏 PATIDAR</strong>Captain</div>
+        </div>
+      </div>
+    </div>
+    <div class="team-stat-card tsc-srh">
+      <div class="tsc-icon">
+        <img src="https://documents.iplt20.com/ipl/SRH/Logos/Logooutline/SRHoutline.png" alt="SRH" onerror="this.style.display='none'">
+      </div>
+      <div class="tsc-body">
+        <div class="tsc-team">Sunrisers Hyderabad</div>
+        <div class="tsc-stats">
+          <div class="tsc-stat"><strong style="color:var(--srh);">ORANGE</strong>Kit</div>
+          <div class="tsc-stat"><strong>Hyderabad</strong>Home</div>
+          <div class="tsc-stat"><strong style="color:var(--srh);">🏏 I. KISHAN</strong>Captain</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW TO WATCH -->
+<div class="how-section">
+  <div class="sec-title">How to <span class="rcb">Watch</span> <span class="srh">Live</span></div>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="step-n rcb">1</div>
+      <div class="step-body"><strong>Stream auto-loads</strong><p>The live stream starts automatically — no URL or app needed.</p></div>
+    </div>
+    <div class="how-step">
+      <div class="step-n srh">2</div>
+      <div class="step-body"><strong>Wait for buffer</strong><p>Give it a few seconds. The spinner disappears once the stream is ready.</p></div>
+    </div>
+    <div class="how-step">
+      <div class="step-n rcb">3</div>
+      <div class="step-body"><strong>Tap Play</strong><p>On mobile, tap the video once to show controls, then tap play.</p></div>
+    </div>
+    <div class="how-step">
+      <div class="step-n srh">4</div>
+      <div class="step-body"><strong>Go fullscreen</strong><p>Tap the fullscreen icon for the best experience on any device.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHANNELS -->
+<div class="quick-section">
+  <div class="sec-title">Free <span class="rcb">Channels</span></div>
+  <div class="quick-grid">
+    <a href="jiohotstar.html" class="qc" style="border-color:rgba(31,128,224,.2);">
+      <div class="qc-dot" style="background:#1f80e0;box-shadow:0 0 8px rgba(31,128,224,.5);"></div>
+      <div><div class="qc-name">JioHotstar</div><div class="qc-sub">IPL 2026 · 4K · Free Tier</div></div>
+    </a>
+    <a href="jiohotstar.html" class="qc" style="border-color:rgba(6,214,160,.2);">
+      <div class="qc-dot" style="background:#06d6a0;box-shadow:0 0 8px rgba(6,214,160,.5);"></div>
+      <div><div class="qc-name">DD Sports</div><div class="qc-sub">100% Free · No Login</div></div>
+    </a>
+  </div>
+</div>
+
+<!-- MOBILE FULLSCREEN OVERLAY (portrait→landscape rotate) -->
+<div id="mobileFs">
+  <button id="mobileFsClose" onclick="closeMobileFs()">✕</button>
+  <iframe id="mobileFsIframe"
+    src="about:blank"
+    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+    allowfullscreen referrerpolicy="no-referrer-when-downgrade">
+  </iframe>
+</div>
+
+<footer>
+  &copy; 2026 icn.rishi · Watch Free Live Cricket · IPL 2026 Season Opener<br>
+  Not affiliated with BCCI, IPL, JioHotstar, RCB or SRH
+</footer>
+
+
+
+</body>
+</html>
